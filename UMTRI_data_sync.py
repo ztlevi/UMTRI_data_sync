@@ -107,9 +107,17 @@ def datalogger_sync():
         for line_num, row in enumerate(csv.reader(inp), 1):
             # retrieve the datalogger start time and convert to seconds
             if line_num == 3:
+                hour = int(start_time/3600)
+                minute = int((start_time-hour*3600)/60)
+                seconds = int(start_time) % 60
+                if hour > 12:
+                    sufix = 'PM'; hour -= 12
+                else:
+                    sufix = 'AM'
+
                 # update the datalogger start time
                 row[0] = ' '.join(
-                    [row[0][:idx + 1], time_arr[0], video_start_time])
+                    [row[0][:idx + 1], time_arr[0], ':'.join([str(hour), str(minute), str(seconds)]), sufix])
                 writer.writerow(row)
 
             elif line_num <= 6:
@@ -122,8 +130,12 @@ def datalogger_sync():
                     # print current time to check status
                     if relative_time.is_integer():
                         print("Datalogger row: " + str(relative_time))
-                    relative_time = Decimal(relative_time)
-                    relative_time = round(relative_time, 2)
+                    if relative_time.is_integer():
+                        relative_time = int(relative_time)
+                    else:
+                        relative_time = Decimal(relative_time)
+                        relative_time = round(relative_time, 2)
+
                     row[0] = str(relative_time)
                     writer.writerow(row)
 
