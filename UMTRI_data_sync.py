@@ -1,4 +1,5 @@
 import csv, time, datetime, os, imageio
+from decimal import Decimal
 
 ###############################################################################
 #                                   Input                                     #
@@ -121,6 +122,8 @@ def datalogger_sync():
                     # print current time to check status
                     if relative_time.is_integer():
                         print("Datalogger row: " + str(relative_time))
+                    relative_time = Decimal(relative_time)
+                    relative_time = round(relative_time, 2)
                     row[0] = str(relative_time)
                     writer.writerow(row)
 
